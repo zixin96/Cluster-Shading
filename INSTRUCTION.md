@@ -1,7 +1,7 @@
 WebGL Forward+ and Clustered Deferred Shading - Instructions
 ==========================================================
 
-**This is due Sunday, October 30th at 11:59 PM.**
+**This is due Sunday, October 29th at 11:59 PM.**
 
 **Summary:**
 
