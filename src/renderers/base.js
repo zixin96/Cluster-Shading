@@ -59,8 +59,9 @@ export default class BaseRenderer {
     for (let z = 0; z < this._zSlices; ++z) {
       for (let y = 0; y < this._ySlices; ++y) {
         for (let x = 0; x < this._xSlices; ++x) {
+          // https://cesium.com/learn/cesiumjs/ref-doc/PerspectiveOffCenterFrustum.html
           let subClusterFrustum = new PerspectiveOffCenterFrustum({
-            left: xStart + x * xStep, // The left clipping plane distance.
+            left: xStart + x * xStep,
             right: xStart + (x + 1) * xStep,
             top: yStart + y * yStep,
             bottom: yStart + (y + 1) * yStep,
@@ -69,14 +70,14 @@ export default class BaseRenderer {
           });
 
           let cullingVolume = subClusterFrustum.computeCullingVolume(
-            camera.position, // The eye position
-            cameraDir, // The view direction
-            camera.up); // The up direction
+            camera.position,
+            cameraDir,
+            camera.up);
 
           let count = 0;
           let indices = [];
           for (let k = 0; k < NUM_LIGHTS; ++k) {
-            let intersect = cullingVolume.computeVisibility(spheres[k]);
+            let intersect = cullingVolume.computeVisibility(spheres[k]); // note that sphere and culling volume are in world space
             if (intersect != Intersect.OUTSIDE) {
               count = count + 1;
               indices.push(k);
@@ -94,7 +95,6 @@ export default class BaseRenderer {
             this._clusterTexture.buffer[this._clusterTexture.bufferIndex(i, r) + c] = indices[k - 1]; 
           }
         }
-
       }
     }
 
