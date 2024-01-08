@@ -11,6 +11,8 @@ export default function(params) {
 
   // TODO: Read this buffer to determine the lights influencing a cluster
   uniform sampler2D u_clusterbuffer;
+  uniform vec2 u_cameraNF;
+  uniform mat4 u_viewProjectionMatrix;
 
   varying vec3 v_position;
   varying vec3 v_normal;
@@ -74,15 +76,47 @@ export default function(params) {
     }
   }
 
+  int computeClusterIndex()
+  {
+    float near = u_cameraNF.x;
+    float far = u_cameraNF.y;
+
+    float dx = 2.0 / float(${params.xSlices});
+    float dy = 2.0 / float(${params.ySlices});
+    float dz = (far - near) / float(${params.zSlices});
+
+    vec4 transformed = u_viewProjectionMatrix * vec4(v_position, 1.0);
+    vec4 ndc = transformed / transformed.w;
+
+    // (ndc + 1.0) convert 2D points to [0, 2] space
+    int kx = int(floor((ndc.x + 1.0) / dx));
+    int ky = int(floor((ndc.y + 1.0) / dy));
+    int kz = int(floor((transformed.z - near) / dz));
+    return kx + ky * ${params.xSlices} + kz * ${params.xSlices} * ${params.ySlices};
+  }
+
   void main() {
     vec3 albedo = texture2D(u_colmap, v_uv).rgb;
     vec3 normap = texture2D(u_normap, v_uv).xyz;
     vec3 normal = applyNormalMap(v_normal, normap);
 
     vec3 fragColor = vec3(0.0);
+    
+    int clusterIndex = computeClusterIndex();
 
-    for (int i = 0; i < ${params.numLights}; ++i) {
-      Light light = UnpackLight(i);
+    int numClusters = int(${params.xSlices} * ${params.ySlices} * ${params.zSlices});
+
+    int lightCount = int(ExtractFloat(u_clusterbuffer, numClusters, ${params.clusterWidth}, clusterIndex, 0));
+
+    const int maxLightPerCluster = ${params.clusterWidth} * 4;
+
+    for (int i = 1; i < maxLightPerCluster; ++i) {
+      if (i > lightCount) {
+        break;
+      }
+      int lidx = int(ExtractFloat(u_clusterbuffer, numClusters, ${params.clusterWidth}, clusterIndex, i));
+      Light light = UnpackLight(lidx);
+
       float lightDistance = distance(light.position, v_position);
       vec3 L = (light.position - v_position) / lightDistance;
 

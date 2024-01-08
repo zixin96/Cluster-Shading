@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MinifyPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = function(env, argv) {
   const isProduction = argv.mode && argv.mode === 'production';
@@ -51,7 +52,8 @@ module.exports = function(env, argv) {
       }),
       new HtmlWebpackPlugin({
         template: "./index.html"
-      })
+      }), 
+      new NodePolyfillPlugin()
     ].filter(p => p),
     performance: {
         hints: false,

@@ -63,6 +63,7 @@ Based on the discussions in lecture and recitation, you are expected to implemen
 ### Part 2: Effects and Optimizations
 
 **Effects**: Choose one of the following effects to implement. (Or do multiple for extra credit!) 
+
 - Implement deferred Blinn-Phong shading (diffuse + specular) for point lights
 - OR
 - Implement one of the following post-processing effects:
@@ -74,7 +75,7 @@ Based on the discussions in lecture and recitation, you are expected to implemen
 - Use 2-component normals
 - Quantize values by using smaller texture types instead of gl.FLOAT
 - Reduce number of properties passed via g-buffer, e.g. by: reconstructing world space position using camera matrices and X/Y/depth
- 
+
  For credit, you must show a good optimization effort and record the performance of each version you test, in a simple table. It is expected that you won't need all 4 provided g-buffers for a basic pipeline. Make sure you disable the unused ones.
 
 ## Performance & Analysis
@@ -82,7 +83,7 @@ Based on the discussions in lecture and recitation, you are expected to implemen
 **Before doing performance analysis**, you must disable debug mode by changing `DEBUG` to false in `src/init.js`. Keep it enabled when developing - it helps find WebGL errors *much* more easily.
 
 Compare your implementations of Forward+ and Clustered Deferred shading and analyze their differences.
-  - Is one of them faster?
+  - Is one of them faster?npm
   - Is one of them better at certain types of workloads?
   - What are the benefits and tradeoffs of using one over the other?
   - For any differences in performance, briefly explain what may be causing the difference.
